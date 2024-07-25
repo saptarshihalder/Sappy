@@ -64,3 +64,25 @@ class SappyLexer(Lexer):
 
     # Identifiers (must come after keywords)
     IDENTIFIER = TokenDef(r'[a-zA-Z_][a-zA-Z0-9_]*')
+
+    def __init__(self, input_text):
+        self.input = input_text
+        self.tokens = []
+        self.position = 0
+
+    def lex(self):
+        while self.position < len(self.input):
+            matched = False
+            for attr_name, attr_value in self.__class__.__dict__.items():
+                if isinstance(attr_value, TokenDef):
+                    match = attr_value.regexp.match(self.input, self.position)
+                    if match:
+                        value = match.group(0)
+                        if not attr_value.ignore:
+                            self.tokens.append((attr_name, value))
+                        self.position = match.end()
+                        matched = True
+                        break
+            if not matched:
+                raise ValueError(f"Unexpected character at position {self.position}")
+        return self.tokens

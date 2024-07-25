@@ -1,0 +1,64 @@
+# This is a comment in Sappy
+
+# Import the math module
+import math;
+
+# Function to calculate Fibonacci numbers
+fn fibonacci(n) {
+    if (n <= 1) {
+        return n;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+# Main program
+fn main() {
+    # Variable declarations
+    let max_num = 10;
+    const golden_ratio = (1 + math.sqrt(5)) / 2;
+
+    # Print a welcome message
+    print("Welcome to the Fibonacci Calculator!");
+    print("Golden Ratio: " + golden_ratio);
+
+    # Loop to calculate and print Fibonacci numbers
+    for (i in range(max_num)) {
+        let fib = fibonacci(i);
+        print("Fibonacci(" + i + ") = " + fib);
+
+        # Conditional statement
+        if (i > 0) {
+            let ratio = fibonacci(i) / fibonacci(i - 1);
+            if (ratio == golden_ratio) {
+                print("Ratio is exactly the golden ratio!");
+            } else if (ratio < golden_ratio) {
+                print("Ratio is approaching the golden ratio from below.");
+            } else {
+                print("Ratio is approaching the golden ratio from above.");
+            }
+        }
+    }
+
+    # Demonstrate while loop and arithmetic operations
+    let sum = 0;
+    let count = 0;
+    while (count < max_num) {
+        sum += fibonacci(count);
+        count += 1;
+    }
+    print("Sum of first " + max_num + " Fibonacci numbers: " + sum);
+
+    # Demonstrate array and string operations
+    let fib_array = [];
+    for (i in range(5)) {
+        fib_array = fib_array + [fibonacci(i)];
+    }
+    print("First 5 Fibonacci numbers: " + fib_array);
+
+    # Return statement
+    return "Program completed successfully!";
+}
+
+# Call the main function
+let result = main();
+print(result);

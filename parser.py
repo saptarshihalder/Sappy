@@ -1,5 +1,5 @@
-from lexer import SappyLexer
 from purplex import Parser, attach, LEFT, RIGHT
+from lexer import SappyLexer
 
 class SappyParser(Parser):
     LEXER = SappyLexer
@@ -14,7 +14,7 @@ class SappyParser(Parser):
         ('left', 'PLUS', 'MINUS'),
         ('left', 'TIMES', 'DIVIDE', 'MODULO'),
         ('right', 'POWER'),
-        ('right', 'NOT'),
+        ('right', 'NOT', 'UMINUS'),
         ('left', 'DOT'),
     )
 
