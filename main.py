@@ -1,4 +1,6 @@
 import sys
+import io
+from contextlib import redirect_stdout
 from parser import SappyParser
 from lexer import SappyLexer
 
@@ -6,6 +8,7 @@ class SappyInterpreter:
     def __init__(self):
         self.global_scope = {}
         self.current_scope = self.global_scope
+        self.output = io.StringIO()
 
     def interpret(self, ast):
         if isinstance(ast, dict):
@@ -20,8 +23,9 @@ class SappyInterpreter:
             return ast
 
     def interpret_Program(self, node):
-        for statement in node['body']:
-            self.interpret(statement)
+        with redirect_stdout(self.output):
+            for statement in node['body']:
+                self.interpret(statement)
 
     def interpret_Declaration(self, node):
         value = self.interpret(node['init'])
@@ -149,19 +153,25 @@ def run_sappy(code, interpreter):
         tokens = lexer.lex()
         ast = parser.parse(tokens)
         result = interpreter.interpret(ast)
-        return result
+        return result, interpreter.output.getvalue()
     except Exception as e:
         print(f"Error: {str(e)}")
-        return None
+        return None, str(e)
 
 def run_sap_file(filename, interpreter):
     try:
         with open(filename, 'r') as file:
             code = file.read()
-        result = run_sappy(code, interpreter)
+        result, output = run_sappy(code, interpreter)
         print(f"Successfully executed {filename}")
-        if result is not None:
-            print("Result:", result)
+
+        output_filename = filename.rsplit('.', 1)[0] + '_output.txt'
+        with open(output_filename, 'w') as output_file:
+            output_file.write(output)
+            if result is not None:
+                output_file.write(f"\nResult: {result}")
+
+        print(f"Output written to {output_filename}")
     except FileNotFoundError:
         print(f"Error: File '{filename}' not found")
     except IOError:
@@ -178,7 +188,8 @@ def interactive_mode(interpreter):
             user_input = input("sappy> ")
             if user_input.lower() == 'exit':
                 break
-            result = run_sappy(user_input, interpreter)
+            result, output = run_sappy(user_input, interpreter)
+            print(output)
             if result is not None:
                 print("Result:", result)
         except KeyboardInterrupt:
